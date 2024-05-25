@@ -4,7 +4,7 @@ Platformer Game
 import socket
 import select
 import arcade
-
+import screenGui
 # Constants
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
@@ -218,7 +218,7 @@ class MyGame(arcade.Window):
                 self.my_socket.send(savekey.encode())
 
         print()
-        print("dik")
+
         #self.savems= self.my_socket.recv(1024).decode()
         #key = self.savems
 
