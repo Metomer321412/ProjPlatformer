@@ -217,7 +217,7 @@ class MyGame(arcade.Window):
                 print("i sent key press " + savekey)
                 self.my_socket.send(savekey.encode())
 
-
+        print()
         print("dik")
         #self.savems= self.my_socket.recv(1024).decode()
         #key = self.savems
