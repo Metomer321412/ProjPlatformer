@@ -26,7 +26,16 @@ class Db:
 
     def authenticate_user(self, user_name: str, password: str) -> bool:
         all_users = self.__cursor.execute(f"""SELECT * FROM {self.__table_name}""")
-        for user_name, password in all_users:
-            if user_name == user_name and password == password:
+        for user_name1, password1 in all_users:
+            if user_name1 == user_name and password1 == password:
                 return True
         return False
+
+    def printall(self):
+        with self.__con:
+            self.__cursor.execute("SELECT * FROM users")
+            print(self.__cursor.fetchall())
+
+
+DATABASE = Db('users')
+

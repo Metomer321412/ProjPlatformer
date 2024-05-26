@@ -4,6 +4,7 @@ import database
 import os
 IP = '0.0.0.0'
 PORT = 1729
+
 def main():
     fnal =False
     plcmnt = 0
