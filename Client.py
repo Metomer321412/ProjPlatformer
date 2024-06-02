@@ -4,6 +4,11 @@ Platformer Game
 import socket
 import select
 import arcade
+import tkinter as tk
+from tkinter import *
+from database import DATABASE
+from pathlib import Path
+import sqlite3
 import screenGui
 # Constants
 SCREEN_WIDTH = 1000
@@ -432,6 +437,79 @@ def main():
     inputs = [my_socket]
     charact = my_socket.recv(1024).decode()
     """Main function"""
+
+    PATH = Path(__file__).parent / "data.db"
+
+    master = Tk()
+    master.title("Color Options in Tkinter")
+    w = Canvas(master, width=500, height=500)
+    w.pack()
+
+    class Db:
+        def __init__(self, table_name: str) -> None:
+            self.__table_name = table_name
+            self.__con = sqlite3.connect(PATH)
+            self.__cursor = self.__con.cursor()
+
+            self.__setup_table()
+
+        def __setup_table(self) -> None:
+            self.__cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
+            """)
+
+    def get_button(t):
+        t.destroy()
+
+    def get_sign(sock):
+        save1 = entry.get()
+        words1 = save1.split(",")
+        username1 = words1[0]
+        password1 = words1[1]
+        sock.my_socket.send(save1)
+        DATABASE.add_user(username1, password1)
+        DATABASE.printall()
+
+    def get_log():
+        save2 = entry2.get()
+        words2 = save2.split(",")
+        username2 = words2[0]
+        password2 = words2[1]
+        if DATABASE.authenticate_user(username2, password2):
+            get_button(w)
+            secondscreen()
+
+    def secondscreen():
+        w = Canvas(master, width=500, height=500)
+        w.pack()
+        buttonS = tk.Button(master, text="START", activebackground="blue", activeforeground="white",
+                            command=lambda t="Button-1 Clicked": get_button(master))
+        buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white")
+        buttonB = tk.Button(master, text="KEYS", activebackground="blue", activeforeground="white")
+        # buttonSign = tk.Button(master, text="Sign in", activebackground="blue", activeforeground="white",command= lambda t= "Button-1 Clicked": retrieve_input())
+
+        buttonB.place(x=180, y=50)
+        buttonR.place(x=230, y=50)
+        buttonS.place(x=280, y=50)
+
+    entry = Entry(master, width=42)
+    entry.place(relx=.5, rely=.5, anchor=CENTER)
+
+    label = Label(master, text="", font=('Helvetica 13'))
+    label.pack()
+    tk.Button(master, text="sign in: username,password", command=get_sign).place(relx=.7, rely=.5, anchor=CENTER)
+
+    entry2 = Entry(master, width=42)
+    entry2.place(relx=.5, rely=.6, anchor=CENTER)
+
+    label2 = Label(master, text="", font=('Helvetica 13'))
+    label2.pack()
+    tk.Button(master, text="log in: username,password", command=get_log).place(relx=.7, rely=.6, anchor=CENTER)
+
+    # buttonSign.place(x=230,y=20)
+
+
+
     window = MyGame(my_socket,inputs,charact)
     window.setup()
 

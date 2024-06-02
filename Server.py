@@ -2,10 +2,29 @@ import socket
 import select
 import database
 import os
+import tkinter as tk
+from tkinter import *
+from database import DATABASE
+from pathlib import Path
+import sqlite3
 IP = '0.0.0.0'
 PORT = 1729
 
 def main():
+    PATH = Path(__file__).parent / "data.db"
+    class Db:
+        def __init__(self, table_name: str) -> None:
+            self.__table_name = table_name
+            self.__con = sqlite3.connect(PATH)
+            self.__cursor = self.__con.cursor()
+
+            self.__setup_table()
+
+        def __setup_table(self) -> None:
+            self.__cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
+            """)
+
     fnal =False
     plcmnt = 0
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,6 +41,13 @@ def main():
     print(address2)
     client_socket2.send("2".encode())
     inputs.append(client_socket2)
+
+
+    counter = 0
+
+    while (counter != 2):
+        print()
+
 
     ALLBUTTONS = ["W", "A", "D", "S", "F", "R", "P", "C"]
     RELEASE = ["2A","2D"]
