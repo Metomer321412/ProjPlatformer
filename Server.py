@@ -9,9 +9,8 @@ from pathlib import Path
 import sqlite3
 IP = '0.0.0.0'
 PORT = 1729
-
+PATH = Path(__file__).parent / "data.db"
 def main():
-    PATH = Path(__file__).parent / "data.db"
     class Db:
         def __init__(self, table_name: str) -> None:
             self.__table_name = table_name
@@ -42,11 +41,6 @@ def main():
     client_socket2.send("2".encode())
     inputs.append(client_socket2)
 
-
-    counter = 0
-
-    while (counter != 2):
-        print()
 
 
     ALLBUTTONS = ["W", "A", "D", "S", "F", "R", "P", "C"]

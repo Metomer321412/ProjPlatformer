@@ -44,12 +44,40 @@ def get_log():
         get_button(w)
         secondscreen()
 
+def Back(w):
+    w.destroy()
+    secondscreen()
+
+def get_Rules(w):
+    print("x")
+    w.destroy()
+    w = Canvas(master, width=500, height=500)
+    w.pack()
+    Rules=tk.Button(master, text="There is only one rule - Push the enemy player out of the map to win",activebackground="blue", activeforeground="white")
+    Rules.place(x=100, y=50)
+    buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
+                        command=lambda t="Button-1 Clicked": Back(w))
+    buttonB.place(x=280, y=100,anchor= CENTER)
+
+def get_Keys(w):
+    w.destroy()
+    w = Canvas(master, width=500, height=500)
+    w.pack()
+ #   Keys = tk.Button(master, text="There is only one rule - Push the enemy player out of the map to win",
+     #                 activebackground="blue", activeforeground="white")
+  #  Rules.place(x=100, y=50)
+    buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
+                        command=lambda t="Button-1 Clicked": Back(w))
+    buttonB.place(x=280, y=100, anchor=CENTER)
+
+
 def secondscreen():
     w = Canvas(master, width=500, height=500)
     w.pack()
+    print("y")
     buttonS = tk.Button(master, text="START", activebackground="blue", activeforeground="white",
                         command=lambda t="Button-1 Clicked": get_button(master))
-    buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white")
+    buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white",command=lambda t="Button-2 Clicked": get_Rules(w))
     buttonB = tk.Button(master, text="KEYS", activebackground="blue", activeforeground="white")
     # buttonSign = tk.Button(master, text="Sign in", activebackground="blue", activeforeground="white",command= lambda t= "Button-1 Clicked": retrieve_input())
 
@@ -72,6 +100,7 @@ label2= Label(master, text="", font=('Helvetica 13'))
 label2.pack()
 tk.Button(master, text= "log in: username,password", command= get_log).place(relx= .7, rely= .6, anchor= CENTER)
 
+print("yasda")
 #buttonSign.place(x=230,y=20)
 mainloop()
 
