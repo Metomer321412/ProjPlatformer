@@ -11,19 +11,6 @@ master.title("Color Options in Tkinter")
 w = Canvas(master, width=500, height=500)
 w.pack()
 
-class Db:
-    def __init__(self, table_name: str) -> None:
-        self.__table_name = table_name
-        self.__con = sqlite3.connect(PATH)
-        self.__cursor = self.__con.cursor()
-
-        self.__setup_table()
-
-    def __setup_table(self) -> None:
-        self.__cursor.execute(f"""
-            CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
-        """)
-
 def get_button(t):
     t.destroy()
 
@@ -35,6 +22,23 @@ def get_sign():
     DATABASE.add_user(username1,password1)
     DATABASE.printall()
 
+#def get_sign(sock):
+
+   #     save1 = entry.get()
+   #     sndsng = "sign" + save1
+  #      print("snding" + sndsng)
+   #     sock.send(sndsng.encode())
+#def get_log(sock):
+
+
+#      save2 = entry2.get()
+#      sndlog = "log" + save2
+#      print("snding" + sndlog)
+#      sock.send(sndlog.encode())
+#     if my_socket.recv(1024).decode()== "true":
+#         print('yes')
+#         get_button(w)
+#         secondscreen()
 def get_log():
     save2 = entry2.get()
     words2 = save2.split(",")

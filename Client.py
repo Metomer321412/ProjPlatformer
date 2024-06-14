@@ -9,14 +9,12 @@ from tkinter import *
 from database import DATABASE
 from pathlib import Path
 import sqlite3
-import screenGui
 # Constants
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Platformer"
 IP = '127.0.0.1'
 PORT = 1729
-
 # Constants used to scale our sprites from their original size
 
 CHARACTER_SCALING = 0.5
@@ -430,7 +428,9 @@ class MyGame(arcade.Window):
         #client.send(str(loc).encode())
         #print(client.recv(1024).decode())
 
+
 def main():
+    print("main")
     my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     my_socket.bind(('0.0.0.0', 0))
     my_socket.connect((IP, PORT))
@@ -445,46 +445,63 @@ def main():
     w = Canvas(master, width=500, height=500)
     w.pack()
 
-    class Db:
-        def __init__(self, table_name: str) -> None:
-            self.__table_name = table_name
-            self.__con = sqlite3.connect(PATH)
-            self.__cursor = self.__con.cursor()
-
-            self.__setup_table()
-
-        def __setup_table(self) -> None:
-            self.__cursor.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
-            """)
-
     def get_button(t):
         t.destroy()
 
     def get_sign(sock):
         save1 = entry.get()
-        words1 = save1.split(",")
-        username1 = words1[0]
-        password1 = words1[1]
-        sock.my_socket.send(save1)
-        DATABASE.add_user(username1, password1)
-        DATABASE.printall()
+        sndsng = "sign" + save1
+        print("snding" + sndsng)
+        sock.send(sndsng.encode())
 
-    def get_log():
+    def get_log(sock):
+
         save2 = entry2.get()
-        words2 = save2.split(",")
-        username2 = words2[0]
-        password2 = words2[1]
-        if DATABASE.authenticate_user(username2, password2):
+        sndlog = "log" + save2
+        print("snding" + sndlog)
+        sock.send(sndlog.encode())
+        print("snding2" + sndlog)
+        if my_socket.recv(1024).decode()== "true":
+            print('yes')
             get_button(w)
             secondscreen()
+
+
+    def Back(w):
+        w.destroy()
+        secondscreen()
+
+    def get_Rules(w):
+        print("x")
+        w.destroy()
+        w = Canvas(master, width=500, height=500)
+        w.pack()
+        Rules = tk.Button(master, text="There is only one rule - Push the enemy player out of the map to win",
+                          activebackground="blue", activeforeground="white")
+        Rules.place(x=100, y=50)
+        buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
+                            command=lambda t="Button-1 Clicked": Back(w))
+        buttonB.place(x=280, y=100, anchor=CENTER)
+
+    def get_Keys(w):
+        w.destroy()
+        w = Canvas(master, width=500, height=500)
+        w.pack()
+        #   Keys = tk.Button(master, text="There is only one rule - Push the enemy player out of the map to win",
+        #                 activebackground="blue", activeforeground="white")
+        #  Rules.place(x=100, y=50)
+        buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
+                            command=lambda t="Button-1 Clicked": Back(w))
+        buttonB.place(x=280, y=100, anchor=CENTER)
 
     def secondscreen():
         w = Canvas(master, width=500, height=500)
         w.pack()
+        print("y")
         buttonS = tk.Button(master, text="START", activebackground="blue", activeforeground="white",
                             command=lambda t="Button-1 Clicked": get_button(master))
-        buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white")
+        buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white",
+                            command=lambda t="Button-2 Clicked": get_Rules(w))
         buttonB = tk.Button(master, text="KEYS", activebackground="blue", activeforeground="white")
         # buttonSign = tk.Button(master, text="Sign in", activebackground="blue", activeforeground="white",command= lambda t= "Button-1 Clicked": retrieve_input())
 
@@ -492,23 +509,23 @@ def main():
         buttonR.place(x=230, y=50)
         buttonS.place(x=280, y=50)
 
+
     entry = Entry(master, width=42)
     entry.place(relx=.5, rely=.5, anchor=CENTER)
 
     label = Label(master, text="", font=('Helvetica 13'))
     label.pack()
-    tk.Button(master, text="sign in: username,password", command=get_sign).place(relx=.7, rely=.5, anchor=CENTER)
+    tk.Button(master, text="sign in: username,password", command=lambda :get_sign(my_socket)).place(relx=.7, rely=.5, anchor=CENTER)
 
     entry2 = Entry(master, width=42)
     entry2.place(relx=.5, rely=.6, anchor=CENTER)
 
     label2 = Label(master, text="", font=('Helvetica 13'))
     label2.pack()
-    tk.Button(master, text="log in: username,password", command=get_log).place(relx=.7, rely=.6, anchor=CENTER)
+    tk.Button(master, text="log in: username,password", command= lambda :get_log(my_socket)).place(relx=.7, rely=.6, anchor=CENTER)
 
-    # buttonSign.place(x=230,y=20)
-
-
+    print("yasda")
+    mainloop()
 
     window = MyGame(my_socket,inputs,charact)
     window.setup()
