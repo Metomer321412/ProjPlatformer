@@ -149,7 +149,6 @@ def main():
 
     ALLBUTTONS = ["W", "A", "D", "S", "F", "R", "P", "C"]
     RELEASE = ["2A","2D"]
-    #msg = client_socket2.recv(1024)
     while (True):
         readable, _, _ = select.select(inputs, [], [],0.00000001)
         for sock in readable:
@@ -167,10 +166,7 @@ def main():
                     print("input from client2 " + but)
                     client_socket1.send(but.encode())
 
-            #print(msg.decode())
-      #  print(msg2.decode())
-        #print(address1)
-        #print(address2)
+
 
 if __name__ == "__main__":
     main()
