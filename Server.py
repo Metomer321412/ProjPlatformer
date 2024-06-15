@@ -13,22 +13,14 @@ IP = '0.0.0.0'
 PORT = 1729
 PATH = Path(__file__).parent / "data.db"
 
-def generate_keys(bit_length=1024):
-    # Generate two large prime numbers p and q
-    p = sympy.randprime(2**(bit_length//2 - 1), 2**(bit_length//2))
-    q = sympy.randprime(2**(bit_length//2 - 1), 2**(bit_length//2))
-
-    # Compute n (modulus) and phi(n)
+def generate_keys(p, q):
     n = p * q
     phi_n = (p - 1) * (q - 1)
 
-    # Choose an integer e such that 1 < e < phi_n and gcd(e, phi_n) = 1
-    e = 65537  # It's common to use 65537 as the public exponent
+    e = 65537
 
-    # Compute the private key d, the modular multiplicative inverse of e modulo phi_n
     d = sympy.mod_inverse(e, phi_n)
 
-    # Public key (e, n) and private key (d, n)
     public_key = (e, n)
     private_key = (d, n)
 
@@ -36,35 +28,20 @@ def generate_keys(bit_length=1024):
 
 def encrypt(plaintext, public_key):
     e, n = public_key
-    # Convert each character in the plaintext to its corresponding integer
     plaintext_integers = [ord(char) for char in plaintext]
-    # Encrypt each integer using the public key
     ciphertext = [pow(char, e, n) for char in plaintext_integers]
     return ciphertext
 
 def decrypt(ciphertext, private_key):
     d, n = private_key
-    # Decrypt each integer in the ciphertext using the private key
     decrypted_integers = [pow(char, d, n) for char in ciphertext]
-    # Convert each decrypted integer back to its corresponding character
     plaintext = ''.join(chr(char) for char in decrypted_integers)
     return plaintext
 
 def main():
-    class Db:
-        def __init__(self, table_name: str) -> None:
-            self.__table_name = table_name
-            self.__con = sqlite3.connect(PATH)
-            self.__cursor = self.__con.cursor()
-
-            self.__setup_table()
-
-        def __setup_table(self) -> None:
-            self.__cursor.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
-            """)
-
-    public_key, private_key = generate_keys()
+    p = 2957
+    q = 3571
+    public_key, private_key = generate_keys(p, q)
 
     fnal =False
     plcmnt = 0
@@ -83,10 +60,11 @@ def main():
     client_socket2.send("2".encode())
     inputs.append(client_socket2)
     counter = 0
+    counter2 = 0
     print(counter)
     print("idk")
+
     while (counter !=2 ):
-    #    print(counter)
         readable, _, _ = select.select(inputs, [], [], 0.00000001)
         for sock in readable:
             print("stuck")
@@ -104,18 +82,22 @@ def main():
                 recsign = recmsg.decode()
                 print("input from client2 " + recsign)
             if recsign !=None:
+                print(recsign)
                 if recsign[:4]=="sign":
                     print("input from client sign " + recsign)
                     splt1 = recsign.split("sign")
                     words1 = splt1[1].split(",")
                     username1 = words1[0]
                     password1 = words1[1]
-                    print(username1 + "," + password1)
+                    print(username1 + " AND " + password1)
                     RSAusr  = encrypt(username1, public_key)
                     print(f"Encrypted ciphertext: {RSAusr}")
                     RSApass = encrypt(password1, public_key)
                     print(f"Encrypted ciphertext: {RSApass}")
                     DATABASE.add_user(str(RSAusr),str(RSApass))
+                    print("usernamesign= " + str(RSAusr))
+                    print("passwordsign= " + str(RSApass))
+                    DATABASE.printall()
 
                 elif recsign[:3]=="log":
                     print("input from client log " + recsign)
@@ -128,6 +110,8 @@ def main():
                     print(f"Encrypted ciphertext: {RSAusr2}")
                     RSApass2 = encrypt(password2, public_key)
                     print(f"Encrypted ciphertext: {RSApass2}")
+                    print("usernamelog= " + str(RSAusr2))
+                    print("passwordlog= " + str(RSApass2))
                     if DATABASE.authenticate_user(str(RSAusr2),str(RSApass2)):
                         counter +=1
                         print(counter)
@@ -137,6 +121,30 @@ def main():
                     else:
                         print('no')
                         clnt.send("no".encode())
+
+                elif recsign=="start":
+                    counter2+=1
+                    print("start rec")
+                    clnt.send('not yet'.encode())
+
+    print("counter2 " + str(counter2))
+    while(counter2 !=2):
+        readable, _, _ = select.select(inputs, [], [], 0.00000001)
+        for sock in readable:
+            strcv = None
+            if sock.getpeername() == address1:
+                acc = client_socket1
+                strt = client_socket1.recv(1024)
+                strcv = strt.decode()
+            else:
+                acc = client_socket2
+                strt = client_socket2.recv(1024)
+                strcv = strt.decode()
+            if strcv == 'start':
+                counter2+=1
+    print("ready")
+    client_socket1.send('yes'.encode())
+    client_socket2.send('yes'.encode())
 
 
     ALLBUTTONS = ["W", "A", "D", "S", "F", "R", "P", "C"]

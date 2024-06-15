@@ -18,10 +18,8 @@ class Db:
             CREATE TABLE IF NOT EXISTS {self.__table_name} (user_name TEXT PRIMARY KEY, password TEXT)
         """)
 
-    def add_user(self, user_name: str, password:str) -> None:
-        self.__cursor.execute(
-            f"""INSERT OR IGNORE INTO {self.__table_name} VALUES(?, ?)""", (user_name, password)
-        )
+    def add_user(self, user_name: str, password: str) -> None:
+        self.__cursor.execute(f"""INSERT OR IGNORE INTO {self.__table_name} VALUES(?, ?)""", (user_name, password))
         self.__con.commit()
 
     def authenticate_user(self, user_name: str, password: str) -> bool:

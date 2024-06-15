@@ -1,5 +1,4 @@
 """
-Platformer Game
 """
 import socket
 import select
@@ -15,7 +14,7 @@ SCREEN_HEIGHT = 650
 SCREEN_TITLE = "Platformer"
 IP = '127.0.0.1'
 PORT = 1729
-# Constants used to scale our sprites from their original size
+
 
 CHARACTER_SCALING = 0.5
 CHARACTER2_SCALING = 1.0
@@ -49,14 +48,12 @@ class MyGame(arcade.Window):
     hitpic = True
     resetchr = [aftrhit,savemsg,Direc,Direc2,UseD,UseD2,CD,CD2,Fjump,Fjump2,Xspeed,Xspeed2,Pspeed,Pspeed2,Btime,Btime2,Djump,Djump2,SaveX,SaveX2,hitpic]
     """
-    Main application class.
+
     """
     def __init__(self, my_socket,inputs,charact):
 
-        # Call the parent class and set up the window
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # These are 'lists' that keep track of our sprites. Each sprite should
         self.my_socket = my_socket
         self.charact = charact
         self.inputs = inputs
@@ -64,7 +61,6 @@ class MyGame(arcade.Window):
         self.scene = None
         self.scene2 = None
 
-        # Separate variable that holds the player sprite
 
         self.player_sprite = None
         self.physics_engine = None
@@ -83,18 +79,15 @@ class MyGame(arcade.Window):
 
     def setup(self):
 
-        """Set up the game here. Call this function to restart the game."""
 
         self.scene = arcade.Scene()
         self.scene2 = arcade.Scene()
-        # Create the Sprite lists
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite_list("Walls", use_spatial_hash=True)
 
         self.scene2.add_sprite_list("Player")
         self.scene2.add_sprite_list("Walls", use_spatial_hash=True)
 
-        # Set up the player, specifically placing it at these coordinates.
         if(self.charact == "1"):
             image_source = r"Picture1.PNG"
             self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
@@ -122,9 +115,7 @@ class MyGame(arcade.Window):
             self.scene.add_sprite("Player", self.player_sprite)
 
         self.RESET()
-        # Create the ground
 
-        # This shows using a loop to place multiple sprites horizontally
 
         for x in range(100, 901, 50):
             wall = arcade.Sprite(":resources:images/tiles/grassMid.png", TILE_SCALING)
@@ -132,9 +123,9 @@ class MyGame(arcade.Window):
             wall.bottom = 200
             self.scene.add_sprite("Walls", wall)
             self.scene2.add_sprite("Walls", wall)
-        # Put some crates on the ground
 
-        # This shows using a coordinate list to place sprites
+
+
         coordinate_list = [[100, 400],[600, 300], [700, 300]]
         for coordinate in coordinate_list:
             # Add a crate on the ground
@@ -151,16 +142,16 @@ class MyGame(arcade.Window):
 
 
     def on_draw(self):
-        """Render the screen."""
+
         # Clear the screen to the background color
         self.clear()
-        # Draw our sprites
+
         self.scene.draw()
         self.scene2.draw()
 
     def key(self):
         pass
-        #player one
+
 
     def update_player_speed(self,player):
 
@@ -179,7 +170,7 @@ class MyGame(arcade.Window):
                 player.change_x = self.Xspeed2
 
     def on_key_press(self, key, modifiers):
-        """Called whenever a key is pressed."""
+
         ALLBUTTONS = {"W", "A", "D", "S", "F", "R", "P", "C"}
         savekey = ''
         if key == arcade.key.W:
@@ -222,13 +213,12 @@ class MyGame(arcade.Window):
 
         print()
 
-        #self.savems= self.my_socket.recv(1024).decode()
-        #key = self.savems
 
 
 
 
-        # player two
+
+
     def on_key_press2(self, key):
         if key == 'W':
             if self.Djump2 < 2:
@@ -259,7 +249,7 @@ class MyGame(arcade.Window):
 
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key."""
+
         ALLBUTTONS = {"2A","2D"}
         savekey=''
         if key == arcade.key.A:
@@ -277,7 +267,7 @@ class MyGame(arcade.Window):
 
 
     def on_key_release2(self, key):
-        """Called when the user releases a key."""
+
         if key == '2A':
             self.left_pressed2 = False
             self.update_player_speed(self.player_sprite2)
@@ -320,15 +310,14 @@ class MyGame(arcade.Window):
             scene.add_sprite("Walls", Hit)
             if (arcade.check_for_collision(Hit,player2)):
                 player2.center_x = player2.center_x + 20
-            #if self.hitpic == False:
-           #     Hit.kill()
+
         else:
             Hit.right = player1.left
             Hit.top = player1.top
             scene.add_sprite("Walls", Hit)
             if (arcade.check_for_collision(Hit, player2)):
                 player2.center_x = player2.center_x - 20
-            #if self.hitpic == False:
+
         Hit.kill()
         self.hitpic = False
 
@@ -349,10 +338,9 @@ class MyGame(arcade.Window):
     def checkmul(self):
         inputs = self.inputs
         readable, _, _ = select.select(inputs, [], [], 0.00000001)
-        # print(readable)
+
         for sock in readable:
-            #  print(sock)
-            # Incoming data on existing connection
+
             data = sock.recv(1024)
             key = data.decode()
             i=0
@@ -370,13 +358,13 @@ class MyGame(arcade.Window):
                     self.on_key_release2(save)
                 else:
                     self.on_key_press2(save)
-   # def attack2(self):
+
     def on_update(self, delta_time):
-        """Movement and game logic"""
-        # player two
+
+
         self.checkmul()
 
-        # print(readable)
+
 
         if self.Btime>0:
             self.block1()
@@ -413,20 +401,14 @@ class MyGame(arcade.Window):
             else:
                 self.UseD2=False
                 self.player_sprite2.change_x = 0
-        # Move the player with the physics engine
 
-#        if self.hitpic == False:
-#            self.attack(self.player_sprite2, self.player_sprite,self.Direc2)
 
         self.CheckEnd()
 
         self.physics_engine.update()
         self.physics_engine2.update()
 
-        #loc = self.player_sprite.center_x
-        #client = self.my_socket
-        #client.send(str(loc).encode())
-        #print(client.recv(1024).decode())
+
 
 
 def main():
@@ -438,32 +420,57 @@ def main():
     charact = my_socket.recv(1024).decode()
     """Main function"""
 
-    PATH = Path(__file__).parent / "data.db"
 
     master = Tk()
-    master.title("Color Options in Tkinter")
+    master.title("MY GAME")
     w = Canvas(master, width=500, height=500)
     w.pack()
 
-    def get_button(t):
+    def get_button(w,t,sock):
+        print("start pressed")
+        sock.send('start'.encode())
+        answer = sock.recv(1024).decode()
+        print(answer)
+        if answer == 'yes':
+            t.destroy()
+        else:
+            w.destroy()
+            print("destroyed")
+            whiteWait(t,sock)
+
+    def whiteWait(t,sock):
+        print("start waiting")
+        inputs.append(sock)
+        ready = False;
+        while(ready==False):
+            print("waiting")
+            w = Canvas(master, width=500, height=500)
+            w.pack()
+            readable, _, _ = select.select(inputs, [], [], 0.00000001)
+            for sock in readable:
+                answer= sock.recv(1024).decode()
+                print(answer)
+                if answer == 'yes':
+                    ready = True;
+            w.destroy
         t.destroy()
+
+
 
     def get_sign(sock):
         save1 = entry.get()
         sndsng = "sign" + save1
-        print("snding" + sndsng)
+        print("snding " + sndsng)
         sock.send(sndsng.encode())
 
     def get_log(sock):
-
         save2 = entry2.get()
         sndlog = "log" + save2
-        print("snding" + sndlog)
+        print("snding " + sndlog)
         sock.send(sndlog.encode())
-        print("snding2" + sndlog)
         if my_socket.recv(1024).decode()== "true":
             print('yes')
-            get_button(w)
+            w.destroy()
             secondscreen()
 
 
@@ -472,7 +479,6 @@ def main():
         secondscreen()
 
     def get_Rules(w):
-        print("x")
         w.destroy()
         w = Canvas(master, width=500, height=500)
         w.pack()
@@ -481,29 +487,29 @@ def main():
         Rules.place(x=100, y=50)
         buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
                             command=lambda t="Button-1 Clicked": Back(w))
-        buttonB.place(x=280, y=100, anchor=CENTER)
+        buttonB.place(x=230, y=100)
 
     def get_Keys(w):
         w.destroy()
         w = Canvas(master, width=500, height=500)
         w.pack()
-        #   Keys = tk.Button(master, text="There is only one rule - Push the enemy player out of the map to win",
-        #                 activebackground="blue", activeforeground="white")
-        #  Rules.place(x=100, y=50)
+        Keys = tk.Button(master, text="A-left,W-jump,W in air - double jump,D-right,R-wall skill,F-flash,C-hit",
+                         activebackground="blue", activeforeground="white")
+        Keys.place(x=100, y=50)
         buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
                             command=lambda t="Button-1 Clicked": Back(w))
-        buttonB.place(x=280, y=100, anchor=CENTER)
+        buttonB.place(x=230, y=100)
 
     def secondscreen():
         w = Canvas(master, width=500, height=500)
         w.pack()
-        print("y")
         buttonS = tk.Button(master, text="START", activebackground="blue", activeforeground="white",
-                            command=lambda t="Button-1 Clicked": get_button(master))
+                            command=lambda t="Button-1 Clicked": get_button(w,master,my_socket))
         buttonR = tk.Button(master, text="RULES", activebackground="blue", activeforeground="white",
                             command=lambda t="Button-2 Clicked": get_Rules(w))
-        buttonB = tk.Button(master, text="KEYS", activebackground="blue", activeforeground="white")
-        # buttonSign = tk.Button(master, text="Sign in", activebackground="blue", activeforeground="white",command= lambda t= "Button-1 Clicked": retrieve_input())
+        buttonB = tk.Button(master, text="KEYS", activebackground="blue", activeforeground="white",
+                            command=lambda t="Button-3 Clicked": get_Keys(w))
+
 
         buttonB.place(x=180, y=50)
         buttonR.place(x=230, y=50)
