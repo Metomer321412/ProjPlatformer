@@ -514,7 +514,7 @@ def main():
         w.destroy()
         w = Canvas(master, width=500, height=500)
         w.pack()
-        Keys = tk.Button(master, text="A-left,W-jump,W in air - double jump,D-right,R-wall skill,F-flash,C-hit",
+        Keys = tk.Button(master, text="A-left,W-jump,W in air - double jump,D-right,R-wall skill,F-flash,C-hit,P-reset the game",
                          activebackground="blue", activeforeground="white")
         Keys.place(x=100, y=50)
         buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
