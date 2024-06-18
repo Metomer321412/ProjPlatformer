@@ -123,13 +123,13 @@ class MyGame(arcade.Window):
             wall.bottom = 200
             self.scene.add_sprite("Walls", wall)
             self.scene2.add_sprite("Walls", wall)
-
-
-
-        coordinate_list = [[100, 400],[600, 300], [700, 300]]
+            saveGround = wall.top
+        print(wall.width)
+        topWall = saveGround
+        coordinate_list = [[300, topWall],[364, topWall],[636, topWall], [700, topWall],[396+32,500],[396+64,500],[636-32-32,500],[636-64-64,500],[0+32,400],[64+32,400],[1000-32,400],[1000-64-32,400]]
         for coordinate in coordinate_list:
             # Add a crate on the ground
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", TILE_SCALING)
+            wall = arcade.Sprite(":resources:images/tiles/grassMid.png", TILE_SCALING)
             wall.position = coordinate
             self.scene.add_sprite("Walls", wall)
             self.scene2.add_sprite("Walls", wall)
@@ -193,8 +193,8 @@ class MyGame(arcade.Window):
         if key == arcade.key.R:
             savekey='R'
             if self.physics_engine.can_jump():
-                self.player_sprite.change_y = 25
-                self.Btime = 1
+                self.player_sprite.change_y = 22
+                self.Btime = 0.8
                 self.SaveX = self.player_sprite.center_x
         if key == arcade.key.F:
             savekey='F'
@@ -236,8 +236,8 @@ class MyGame(arcade.Window):
                 self.update_player_speed(self.player_sprite2)
         if key == 'R':
             if self.physics_engine2.can_jump():
-                self.player_sprite2.change_y = 25
-                self.Btime2 = 1
+                self.player_sprite2.change_y = 22
+                self.Btime2 = 0.8
                 self.SaveX2 = self.player_sprite2.center_x
         if key == 'F':
             self.Dash2()
@@ -426,34 +426,55 @@ def main():
     w = Canvas(master, width=500, height=500)
     w.pack()
 
-    def get_button(w,t,sock):
+    def get_button(w,t,socke):
         print("start pressed")
-        sock.send('start'.encode())
-        answer = sock.recv(1024).decode()
+        socke.send('start'.encode())
+        answer = socke.recv(1024).decode()
         print(answer)
         if answer == 'yes':
             t.destroy()
         else:
             w.destroy()
             print("destroyed")
-            whiteWait(t,sock)
+            #whiteWait(t,sock)
+            #secondscreen()
+           # w = Canvas(t, width=500, height=500)
+            #w.pack()
+            ready = False
+            while (ready == False):
+
+                print("waiting")
+                readable, _, _ = select.select(inputs, [], [], 0.01)
+                for sock in readable:
+                    print("before")
+                    answer = sock.recv(1024).decode()
+                    if answer == 'yes':
+                        ready= True
+                        print(ready)
+                        w.destroy()
+                        t.destroy()
+                        readable.clear()
+                      #  print(ready)
+            #while(True):
+            #    print("X")
+        #print("x")
 
     def whiteWait(t,sock):
         print("start waiting")
         inputs.append(sock)
-        ready = False;
+        ready = False
         while(ready==False):
             print("waiting")
             w = Canvas(master, width=500, height=500)
             w.pack()
-            readable, _, _ = select.select(inputs, [], [], 0.00000001)
+            readable, _, _ = select.select(inputs, [], [], 0.001)
             for sock in readable:
                 answer= sock.recv(1024).decode()
                 print(answer)
                 if answer == 'yes':
-                    ready = True;
-            w.destroy
-        t.destroy()
+                    ready = True
+            print(ready)
+            t.destroy
 
 
 
@@ -532,6 +553,8 @@ def main():
 
     print("yasda")
     mainloop()
+
+    print("left tkinter")
 
     window = MyGame(my_socket,inputs,charact)
     window.setup()
