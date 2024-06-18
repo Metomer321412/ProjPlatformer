@@ -516,7 +516,7 @@ def main():
         w.pack()
         Keys = tk.Button(master, text="A-left,W-jump,W in air - double jump,D-right,R-wall skill,F-flash,C-hit,P-reset the game",
                          activebackground="blue", activeforeground="white")
-        Keys.place(x=100, y=50)
+        Keys.place(x=20, y=50)
         buttonB = tk.Button(master, text="BACK", activebackground="blue", activeforeground="white",
                             command=lambda t="Button-1 Clicked": Back(w))
         buttonB.place(x=230, y=100)
